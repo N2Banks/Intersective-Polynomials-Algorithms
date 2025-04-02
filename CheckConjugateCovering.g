@@ -180,7 +180,10 @@ CheckConjugateCovering := function(G, indices)
 
     groupIDStr := JoinStringsWithSeparator(split, ".");
     indicesStr := JoinStringsWithSeparator(List(indices, String), ",");
-    folderPath := Concatenation("C:/Users/User/OneDrive/Documents/CheckConjugateCovering outputs/r=", String(Length(indices)));
+
+    # you may want to repalce "~" with your current directory in the following
+
+    folderPath := Concatenation("~/CheckConjugateCovering outputs/r=", String(Length(indices)));
     filePath := Concatenation(folderPath, "/", groupIDStr, "_", indicesStr, ".txt");
     
     # Open a file for logging all detailed output
