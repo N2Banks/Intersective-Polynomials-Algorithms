@@ -22,4 +22,4 @@ Cross-referencing the results of these algorithms gives a finite list of all Gal
 
 For the arithmetic side of things, it was simpler to use a theorem of Sonn ("Polynomials With Roots in $\mathbb{Q}_p$ For All $p$", 2008) involving decomposition groups. As part of my thesis, I showed that this condition need only hold for ramified primes, and since these are finite in number, this constitutes another algorithm. This is the content of **file 4**.
 
-In my thesis, I proved another criteria for intersectivity at ramified primes. It amounts to checking ramification and inertia degrees in various subextensions cut out by single roots. This is the content of **file 5**.
+In my thesis, I proved another criteria for intersectivity at ramified primes. It amounts to checking ramification and inertia degrees in various subextensions cut out by single roots. This is the content of "check_intersectivity_ramification_degrees.sage".
