@@ -181,7 +181,7 @@ CheckConjugateCovering := function(G, indices)
     groupIDStr := JoinStringsWithSeparator(split, ".");
     indicesStr := JoinStringsWithSeparator(List(indices, String), ",");
 
-    # you may want to repalce "~" with your current directory in the following
+    # you may want to replace "~" with your current directory in the following
 
     folderPath := Concatenation("~/CheckConjugateCovering outputs/r=", String(Length(indices)));
     filePath := Concatenation(folderPath, "/", groupIDStr, "_", indicesStr, ".txt");
