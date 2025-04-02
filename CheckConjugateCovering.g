@@ -288,7 +288,7 @@ CheckConjugateCovering := function(G, indices)
 end;
 
 # Example:
-# When you load this function, it will automatically call this example. Comment the bottom line if it annoys you
-# However, this is nice to check if the function is working. You can check that the output file is named "72.43_3,3,4,6.txt", and the union sizes in the console should only be 66 and 72
+    # When you load this function, it will automatically call this example. Comment the bottom line if it annoys you
+    # However, this is nice to check if the function is working. You can check that the output file is named "72.43_3,3,4,6.txt", and the union sizes in the console should only be 66 and 72
 
 CheckConjugateCovering(SmallGroup(72, 43), [3, 3, 4, 6]);
