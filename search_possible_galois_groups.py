@@ -2,6 +2,8 @@ import re
 import requests
 from math import prod
 
+# Note, many commented lines correspond to intermediate printed statements. These were originally for debugging and can be uncommented to check if the functions are behaving as expected
+
 # Accelerated ascending algorithm to generate all partitions of a positive integer d
 # Information can be found, e.g., at "https://jeromekelleher.net/generating-integer-partitions.html"
 # Modified to exclude any partitions containing 1 or d
@@ -91,14 +93,14 @@ def extract_subgroup_labels(filename):
 
     # print("Number of lines in the extracted section:", len(section_lines))
 
-    # Regex pattern to match lines beginning with '<tr><td>Order ' allowing for leading whitespace.
+    # Regex pattern to match lines beginning with '<tr><td>Order ' and allowing for leading whitespace.
     order_line_pattern = re.compile(r'^\s*<tr><td>Order (\d+)', re.IGNORECASE)
 
     for line in section_lines:
         order_match = order_line_pattern.search(line)
         if order_match:
             order_number = order_match.group(1)
-            # Only consider order numbers greater than 500.
+            # Only consider order numbers greater than 500 (used during testing)
             # if int(order_number) > 500:
                 # print("Processing order line:", line.rstrip())
                 # Build regex for occurrences: kwargs="args=<order_number>.<y>%"
