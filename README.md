@@ -16,7 +16,7 @@ I then wrote a GAP function to check which of these groups can possibly be cover
 
 One can show (e.g., with Berend and Bilu's result) that strongly intersective polynomials are always reducible and of degree $\geq 5$. Therefore, it is useful to note that, if $P$ factors into irreducibles as $P(x)=h_1(x)\cdots h_r(x)$ and $h_i$ has Galois group $G_i$ over $\mathbb{Q}$, then the Galois group $G$ of $P$ over $\mathbb{Q}$ is a subgroup of the direct product $G_1\times\cdots\times G_r$. In fact, it is a subdirect product, which means that the restrictions of the projection maps to $G$ are all surjective. Equivalently, $G$ has a family of normal subgroups $N_1,\cdots,N_r$ such that $G/N_i\cong G_i$ and $\bigcap_{i=1}^{r}N_i$ is the trivial subgroup. In particular, this means that $|G|$ is divisible by $\mathrm{lcm}(|G_1|,\cdots,|G_r|)$.
 
-Therefore, to classify possible Galois groups of strongly intersective polynomials by degree, it is helpful to have a list of all subdirect products of possible direct products of Galois groups. This was implemented in SageMath and is the content of **file 3**.
+Therefore, to classify possible Galois groups of strongly intersective polynomials by degree, it is helpful to have a list of all subdirect products of possible direct products of Galois groups. This was implemented in SageMath and is the content of "find_subdirect_products.sage".
 
 Cross-referencing the results of these algorithms gives a finite list of all Galois groups of strongly intersective polynomials by degree.
 
