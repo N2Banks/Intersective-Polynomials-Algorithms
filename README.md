@@ -6,7 +6,7 @@ A polynomial $P(x)\in\mathbb{Z}[x]$ is called **intersective** if it has a root 
 
 Some examples are $(x^3-19)(x^2+x+1)$ (annoying to check by hand) and $(x^2-2)(x^2-17)(x^2-34)$ (straightforward to check with Legendre symbols).
 
-Note that having a root modulo all n is equivalent to having a root in the $p$-adic numbers $\mathbb{Q}_p$ for all primes $p$. Thus, one can expect the primes dividing the discriminant of $P(x)$ to behave differently - a common story in number theory.
+Note that having a root modulo all $n$ is equivalent to having a root in the $p$-adic numbers $\mathbb{Q}_p$ for all primes $p$. Thus, one can expect the primes dividing the discriminant of $P(x)$ to behave differently - a common story in number theory.
 
 One important paper on this subject was by Berend and Bilu ("Polynomials with Roots Modulo Every Integer", 1996) which provided a number-theoretic algorithm to check intersectivity. The arithmetic half of the algorithm amounts to finding roots modulo certain prime powers (primes dividing the polynomial discriminant, with powers large enough so that Hensel's Lemma takes over). The second, algebraic half is checking if the polynomial's Galois group over $\mathbb{Q}$ can be covered by conjugates of certain subgroups.
 
