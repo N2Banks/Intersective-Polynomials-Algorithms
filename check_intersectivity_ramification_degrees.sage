@@ -1,7 +1,12 @@
 def check_intersectivity_ramification_degrees(f, *polynomials):
     # checks whether the product of distinct, irreducible polynomials h_1*h_2*...*h_r is intersective at ramified primes. In other words, this checks if h_1*...*h_r has a root in the p-adics Q_p for all primes p which divide the discriminant
-    # f is an irreducible polynomial defining the same splitting field as h_1*...*h_r (can use resultants, c.f. Awtrey et al., to find this; Magma also has a built-in method)
-    # based on a result from my thesis: Instead of finding polynomial roots, we check if there is an i such that the ramified prime p has a prime factor with inertia and ramification degree both equal to 1 in some intermediate extension defined by a root of h_i
+    # f is an irreducible polynomial defining the same splitting field as h_1*...*h_r. f can be found using resultants, c.f. Awtrey et al. Magma also has a built-in method; the following returns a possible choice for f:
+
+    # P<x> := PolynomialAlgebra(Rationals());
+    # f := (x^5-2*x^4+7*x^3-4*x^2+11*x+6)*(x^4-x^3+13*x^2-19*x+361);
+    # K<a> := SplittingField(f); K;
+
+    # this method is based on a result from my thesis: Instead of finding polynomial roots, we check if there is an i such that the ramified prime p has a prime factor with inertia and ramification degree both equal to 1 in some intermediate extension defined by a root of h_i
 
 
     # Inputs:
