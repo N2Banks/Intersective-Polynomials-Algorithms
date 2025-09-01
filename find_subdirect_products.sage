@@ -17,7 +17,7 @@
     # Since I only cared about them up to isomorphism, once a subdirect product is found, all candidate subgroups which are isomorphic are skipped. However, this cannot be done for negative results, as subdirectness can depend on the exact copy of the subgroup that appears
     # Since subgroups are sorted by order, if there is an issue with higher order subgroups (e.g., finding their group IDs - more on this below), we can still print the results up to that point. An error message will then be shown indicating at which order the problem occurred
 
-    # About group IDs: It is convenient to list output groups with their GAP group IDs, as finite groups - especially of higher order - can have many different isomorphic definitions. GAP group IDs give each finite group a unique tuple, e.g., [4, 2]. These group IDs are consistent with the LMFDB abstract group database's finite group IDs, however LMFDB assigns IDs to higher orders than GAP. Since LMFDB's data formed the backbone of my thesis work, I wanted to implement the necessary LMFDB group IDs into my functions. This is the purpose of the "lmfdbMapping" at the beginning, and the 
+# About group IDs: It is convenient to list output groups with their GAP group IDs, as finite groups - especially of higher order - can have many different isomorphic definitions. GAP group IDs give each finite group a unique tuple, e.g., [4, 2]. These group IDs are consistent with the LMFDB abstract group database's finite group IDs, however LMFDB assigns IDs to higher orders than GAP. Since LMFDB's data formed the backbone of my thesis work, I wanted to implement the necessary LMFDB group IDs into my functions. This is the purpose of the "lmfdbMapping" at the beginning, and the 
 
 
 # Inputs:
