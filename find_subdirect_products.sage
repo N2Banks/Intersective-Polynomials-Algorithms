@@ -1,5 +1,5 @@
 # Let D := G_1 x ... x G_r be a direct product of finite groups. A subgroup G of D is called a "subdirect product" if the restricted projection maps pi_i: G -> G_i are all surjective
-# Equivalently, and easier to check on a computer: G is a subdirect product of G as an abstract group if it has a set of normal subgroups N_1, ..., N_r such that G/N_i is isomorphic to G_i, and the N_i all intersect trivially
+# Equivalently, and easier to implement for a novice like me: G is a subdirect product of G as an abstract group if it has a set of normal subgroups N_1, ..., N_r such that G/N_i is isomorphic to G_i, and the N_i all intersect trivially
 # This comes up in Galois theory: If P(x) = h_1(x)*...*h_r(x) is the factorization of P into irreducibles (over, say, the rationals Q), let G be the Galois group of P and G_i the Galois group of h_i. Then G is a subdirect product of G_1 x ... x G_r (see Lang's "Algebra" for a proof)
 # In particular, the order |G| must be divisible by |G_i| for each i. In other words, |G| is divisible by lcm(|G_1|, ..., |G_r|). More particularly, if the |G_i| are coprime, then G_1 x ... x G_r has no proper subdirect products
 
@@ -15,7 +15,9 @@
     # To catch positive results early, we do this in blocks: If N_1 and N_2 already intersect trivially, and H has the appropriate other quotients, then we already can conclude positively about H
     # Naturally, this means negative results will take longest to find
     # Since I only cared about them up to isomorphism, once a subdirect product is found, all candidate subgroups which are isomorphic are skipped. However, this cannot be done for negative results, as subdirectness can depend on the exact copy of the subgroup that appears
-    # Since subgroups are sorted by order, if there is an issue with higher order subgroups (e.g., finding their group IDs), we can still print the results up to that point. An error message will then be shown indicating at which order the problem occurred
+    # Since subgroups are sorted by order, if there is an issue with higher order subgroups (e.g., finding their group IDs - more on this below), we can still print the results up to that point. An error message will then be shown indicating at which order the problem occurred
+
+    # About group IDs: It is convenient to list output groups with their GAP group IDs, as finite groups - especially of higher order - can have many different isomorphic definitions. GAP group IDs give each finite group a unique tuple, e.g., [4, 2]. These group IDs are consistent with the LMFDB abstract group database's finite group IDs, however LMFDB assigns IDs to higher orders than GAP. Since LMFDB's data formed the backbone of my thesis work, I wanted to implement the necessary LMFDB group IDs into my functions. This is the purpose of the "lmfdbMapping" at the beginning, and the 
 
 
 # Inputs:
@@ -136,6 +138,19 @@ lmfdbMapping = {
     PermutationGroup([[(1,2,4,8,5,9), (3,6,7)], [(1,3,7,4,8,2,5,9), (10,11)]]): "725760.a"
 }
 
+# If a group G has no group_id, i.e., if its order is too high, then use the lmfdbMapping defined above
+
+def group_identifier(G):
+    try:
+        return G.group_id()  # Attempt the GAP group ID
+    except (AttributeError, RuntimeError, ValueError):
+        # Fallback: Look up in lmfdbMapping
+        for known_group, lmfdb_id in lmfdbMapping.items():
+            if G.is_isomorphic(known_group):
+                return lmfdb_id
+        # If all fails, return something unique but informative
+        return f"UnknownID_{G.order()}"
+
 def find_subdirect_products(groups):
     
     if not groups:
@@ -158,20 +173,16 @@ def find_subdirect_products(groups):
 
     print("Computed lcm(|G_1|,...,|G_r|) =", L)
 
-    # Determine the distinct group identifiers (as returned by groupIdentifier) and their counts.
+    # Determine the distinct group identifiers (as returned by group_identifier) and their counts
     distinct_ids = []
     counts = []
     prev = None
     for G in groups:
-        try:
-            g_id = groupIdentifier(G)
-        except Exception as e:
-            print("Error computing group identifier for one of the input groups; aborting.")
-            return
-        if g_id != prev:
-            distinct_ids.append(g_id)
+        G_id = group_identifier(G)
+        if G_id != prev:
+            distinct_ids.append(G_id)
             counts.append(1)
-            prev = g_id
+            prev = G_id
         else:
             counts[-1] += 1
     k = len(distinct_ids)
@@ -200,22 +211,21 @@ def find_subdirect_products(groups):
     for j, H in enumerate(S):
 
         # Try to compute the group identifier for H for progress reporting.
-        try:
-            current_gid = groupIdentifier(H)
-        except Exception as e:
-            error_encountered = True
-            error_order = H.order()
-            print("Error encountered computing group identifier for subgroup with order {}. Stopping processing.".format(error_order))
-            break
+        current_gid = group_identifier(H)
+        #except Exception as e:
+            #error_encountered = True
+            #error_order = H.order()
+            #print("Error encountered computing group identifier for subgroup with order {}. Stopping processing.".format(error_order))
+            #break
 
         print("\nProcessing subgroup {} of {}: group_id = {}, order = {}.".
-        #       format(j+1, len(S), current_gid, H.order()))
+               format(j+1, len(S), current_gid, H.order()))
         
         # Skip H if it is isomorphic to a previously found subdirect product.
         skip = False
         for rep in subdirect_reps:
             if H.is_isomorphic(rep):
-                print("Skipping H since it is isomorphic to a previously found subdirect product (group_id {}, order {}).".format(groupIdentifier(rep), rep.order()))
+                print("Skipping H since it is isomorphic to a previously found subdirect product (group_id {}, order {}).".format(group_identifier(rep), rep.order()))
                 skip = True
                 break
         if skip:
@@ -227,7 +237,7 @@ def find_subdirect_products(groups):
         for i in range(k):
             try:
                 N_i = [N_sub for N_sub in H.normal_subgroups() 
-                       if groupIdentifier(H.quotient(N_sub)) == distinct_ids[i]]
+                       if group_identifier(H.quotient(N_sub)) == distinct_ids[i]]
             except Exception as e:
                 error_encountered = True
                 error_order = H.order()
@@ -258,7 +268,7 @@ def find_subdirect_products(groups):
                 break
             B.append(inter)
         if trivial_found:
-            print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(groupIdentifier(H), H.order()))
+            print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(group_identifier(H), H.order()))
             subdirect_products.append(H)
             subdirect_reps.append(H)
             continue
@@ -280,7 +290,7 @@ def find_subdirect_products(groups):
                 if trivial_found:
                     break
             if trivial_found:
-                print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(groupIdentifier(H), H.order()))
+                print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(group_identifier(H), H.order()))
                 subdirect_products.append(H)
                 subdirect_reps.append(H)
                 break
@@ -288,14 +298,14 @@ def find_subdirect_products(groups):
         if error_encountered:
             break
         # if not trivial_found:
-            print("Subgroup with group identifier {} (order {}) is NOT a subdirect product.".format(groupIdentifier(H), H.order()))
+            print("Subgroup with group identifier {} (order {}) is NOT a subdirect product.".format(group_identifier(H), H.order()))
 
     # Summary output:
     print("\nSummary:")
     if subdirect_products:
         print("Found {} subdirect product(s):".format(len(subdirect_products)))
         for H in subdirect_products:
-            print("  - subgroup with group identifier {} and order {}".format(groupIdentifier(H), H.order()))
+            print("  - subgroup with group identifier {} and order {}".format(group_identifier(H), H.order()))
     else:
         print("None of the proper subgroups of D (of order divisible by {}) is a subdirect product.".format(L))
     if error_encountered:
