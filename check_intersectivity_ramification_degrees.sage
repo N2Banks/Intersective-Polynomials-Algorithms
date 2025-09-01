@@ -1,5 +1,4 @@
-def check_intersectivity_ramification_degrees(f, *polynomials):
-    # Checks whether the product of distinct, irreducible polynomials h_1*h_2*...*h_r is intersective at ramified primes. In other words, this checks if h_1*...*h_r has a root in the p-adics Q_p for all primes p which divide the discriminant
+# Checks whether the product of distinct, irreducible polynomials h_1*h_2*...*h_r is intersective at ramified primes. In other words, this checks if h_1*...*h_r has a root in the p-adics Q_p for all primes p which divide the discriminant
     # f is an irreducible polynomial defining the same splitting field as h_1*...*h_r. f can be found using resultants, c.f. Awtrey et al. Magma also has a built-in method; the following returns a possible choice for f:
 
     # P<x> := PolynomialAlgebra(Rationals());
@@ -8,13 +7,14 @@ def check_intersectivity_ramification_degrees(f, *polynomials):
 
     # This method is based on a result from my thesis: Instead of finding polynomial roots, we check if there is an i such that the ramified prime p has a prime factor with inertia and ramification degree both equal to 1 in some intermediate extension defined by a root of h_i
 
-
-    # Inputs:
+# Inputs:
         # f: The defining polynomial of the number field K (computed with Magma)
         # polynomials: List of polynomials whose roots define subfields K_i
 
     # Returns:
-        # str: A message indicating whether the polynomial is intersective at ramified primes, and if not, at which primes the failure occurs
+        # A message indicating whether the polynomial is intersective at ramified primes, and if not, at which primes the failure occurs
+
+def check_intersectivity_ramification_degrees(f, *polynomials):
     x = polygen(QQ)
     K = NumberField(f, 'a')
     a = K.gen()
