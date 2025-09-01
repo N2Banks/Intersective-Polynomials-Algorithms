@@ -17,15 +17,14 @@
     # Since I only cared about them up to isomorphism, once a subdirect product is found, all candidate subgroups which are isomorphic are skipped. However, this cannot be done for negative results, as subdirectness can depend on the exact copy of the subgroup that appears
     # Since subgroups are sorted by order, if there is an issue with higher order subgroups (e.g., finding their group IDs - more on this below), we can still print the results up to that point. An error message will then be shown indicating at which order the problem occurred
 
-# About group IDs: It is convenient to list output groups with their GAP group IDs, as finite groups - especially of higher order - can have many different isomorphic definitions. GAP group IDs give each finite group a unique tuple, e.g., [4, 2]. These group IDs are consistent with the LMFDB abstract group database's finite group IDs, however LMFDB assigns IDs to higher orders than GAP. Since LMFDB's data formed the backbone of my thesis work, I wanted to implement the necessary LMFDB group IDs into my functions. This is the purpose of the "lmfdbMapping" at the beginning, and the 
-
+# About group IDs: It is convenient to list output groups with their GAP group IDs, as finite groups - especially of higher order - can have many different isomorphic definitions. GAP group IDs give each finite group a unique tuple, e.g., [4, 2]. These group IDs are consistent with the LMFDB abstract group database's finite group IDs, however LMFDB assigns IDs to higher orders than GAP. Since LMFDB's data formed the backbone of my thesis work, I wanted to implement the necessary LMFDB group IDs into my functions. This is the purpose of the "lmfdbMapping" at the beginning, and the "group_identifier" function given following this mapping. This is pretty hacky - the lmfdbMapping only uses one specific permutation representation of the relevant groups (which are the ones used on LMFDB), and then group_identifier compares isomorphic types. There are surely better ways to implement this - a future version, perhaps?
 
 # Inputs:
     # A list of finite groups [G_1, ..., G_r], aptly named "groups"
 # Outputs:
     # The number of non-isomorphic subdirect products of G_1 x ... x G_r, along with their GAP SmallGroup IDs, called as "group_id()"
 
-# There are many commented lines which form a progress report. This is good for debugging, and also helps put one's mind at ease during long computations
+# There are many commented lines which form a progress report. These can be uncommented for debugging, and also helps put one's mind at ease during long computations
 
 # ===============================================
 
@@ -138,18 +137,18 @@ lmfdbMapping = {
     PermutationGroup([[(1,2,4,8,5,9), (3,6,7)], [(1,3,7,4,8,2,5,9), (10,11)]]): "725760.a"
 }
 
-# If a group G has no group_id, i.e., if its order is too high, then use the lmfdbMapping defined above
+# group_identifier: If a group G has no group_id, i.e., if its order is too high, then use the lmfdbMapping defined above
 
 def group_identifier(G):
     try:
-        return G.group_id()  # Attempt the GAP group ID
+        return G.group_id()
     except (AttributeError, RuntimeError, ValueError):
-        # Fallback: Look up in lmfdbMapping
         for known_group, lmfdb_id in lmfdbMapping.items():
             if G.is_isomorphic(known_group):
                 return lmfdb_id
-        # If all fails, return something unique but informative
         return f"UnknownID_{G.order()}"
+
+# Main function
 
 def find_subdirect_products(groups):
     
@@ -165,15 +164,14 @@ def find_subdirect_products(groups):
         for g in groups[1:]:
             D = D.direct_product(g)[0]
 
-    print("Direct product D formed.")
+    # print("Direct product D formed.")
 
-    # Compute L := lcm(|G_1|, ..., |G_r|)
     orders = [G_i.order() for G_i in groups]
     L = lcm(orders)
 
-    print("Computed lcm(|G_1|,...,|G_r|) =", L)
+    # print("Computed lcm(|G_1|,...,|G_r|) =", L)
 
-    # Determine the distinct group identifiers (as returned by group_identifier) and their counts
+    # Find distinct group IDs (as returned by group_identifier) and their counts
     distinct_ids = []
     counts = []
     prev = None
@@ -187,13 +185,13 @@ def find_subdirect_products(groups):
             counts[-1] += 1
     k = len(distinct_ids)
 
-    print("Distinct group IDs:", distinct_ids)
-    print("Counts for each distinct group:", counts)
+    # print("Distinct group IDs:", distinct_ids)
+    # print("Counts for each distinct group:", counts)
 
-    # Form the list S of all proper subgroups H of D whose order is divisible by L.
+    # Form the list S of all proper subgroups H of D whose order is divisible by L
     S = [H for H in D.subgroups() if H != D and (H.order() % L == 0)]
 
-    print("Found", len(S), "proper subgroups of D with orders divisible by", L)
+    # print("Found", len(S), "proper subgroups of D with orders divisible by", L)
 
     if len(S) == 0:
         print("No proper subgroups of D have order divisible by lcm(|G_1|,...,|G_r|) = {}.".format(L))
@@ -210,28 +208,28 @@ def find_subdirect_products(groups):
     # Process each candidate subgroup H in S
     for j, H in enumerate(S):
 
-        # Try to compute the group identifier for H for progress reporting.
+        # Try to compute group_identifier
         current_gid = group_identifier(H)
-        #except Exception as e:
-            #error_encountered = True
+        # except Exception as e:
+            # error_encountered = True
             #error_order = H.order()
-            #print("Error encountered computing group identifier for subgroup with order {}. Stopping processing.".format(error_order))
-            #break
+            # print("Error encountered computing group identifier for subgroup with order {}. Stopping processing.".format(error_order))
+            # break
 
-        print("\nProcessing subgroup {} of {}: group_id = {}, order = {}.".
-               format(j+1, len(S), current_gid, H.order()))
+        # print("\nProcessing subgroup {} of {}: group_id = {}, order = {}.".
+               # format(j+1, len(S), current_gid, H.order()))
         
-        # Skip H if it is isomorphic to a previously found subdirect product.
+        # Skip H if it is isomorphic to a previously found subdirect product
         skip = False
         for rep in subdirect_reps:
             if H.is_isomorphic(rep):
-                print("Skipping H since it is isomorphic to a previously found subdirect product (group_id {}, order {}).".format(group_identifier(rep), rep.order()))
+                # print("Skipping H since it is isomorphic to a previously found subdirect product (group_id {}, order {}).".format(group_identifier(rep), rep.order()))
                 skip = True
                 break
         if skip:
             continue
 
-        # For H, form lists N[0],...,N[k-1]: H must have a quotient isomorphic to each input group.
+        # For H, form lists N[0],...,N[k-1]: H must have a quotient isomorphic to each input group
         N = []
         valid_H = True
         for i in range(k):
@@ -245,7 +243,7 @@ def find_subdirect_products(groups):
                 valid_H = False
                 break
             if len(N_i) == 0:
-                print("No normal subgroup of H yields a quotient with group identifier", distinct_ids[i], "; skipping H.")
+                # print("No normal subgroup of H yields a quotient with group identifier", distinct_ids[i], "; skipping H.")
                 valid_H = False
                 break
             N.append(N_i)
@@ -256,9 +254,9 @@ def find_subdirect_products(groups):
 
         trivial_found = False
 
-        # Block 1: Form all intersections of exactly counts[0] (with repetition allowed) subgroups from N[0].
+        # Block 1: Form all intersections of exactly counts[0] (with repetition allowed) subgroups from N[0]
         B = []
-        print("Processing block 1 for subgroup H...")
+        # print("Processing block 1 for subgroup H...")
         for combo in itertools.product(N[0], repeat=counts[0]):
             inter = combo[0]
             for subgroup in combo[1:]:
@@ -268,15 +266,15 @@ def find_subdirect_products(groups):
                 break
             B.append(inter)
         if trivial_found:
-            print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(group_identifier(H), H.order()))
+            # print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(group_identifier(H), H.order()))
             subdirect_products.append(H)
             subdirect_reps.append(H)
             continue
 
-        # Process subsequent blocks.
+        # Process subsequent blocks
         for i in range(1, k):
             new_B = []
-            print("Processing block", i+1, "for subgroup H...")
+            # print("Processing block", i+1, "for subgroup H...")
             for B_elem in B:
                 for combo in itertools.product(N[i], repeat=counts[i]):
                     inter_temp = combo[0]
@@ -290,7 +288,7 @@ def find_subdirect_products(groups):
                 if trivial_found:
                     break
             if trivial_found:
-                print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(group_identifier(H), H.order()))
+                # print("Subgroup with group identifier {} (order {}) IS a subdirect product.".format(group_identifier(H), H.order()))
                 subdirect_products.append(H)
                 subdirect_reps.append(H)
                 break
@@ -298,10 +296,9 @@ def find_subdirect_products(groups):
         if error_encountered:
             break
         # if not trivial_found:
-            print("Subgroup with group identifier {} (order {}) is NOT a subdirect product.".format(group_identifier(H), H.order()))
+            # print("Subgroup with group identifier {} (order {}) is NOT a subdirect product.".format(group_identifier(H), H.order()))
 
-    # Summary output:
-    print("\nSummary:")
+    # Output:
     if subdirect_products:
         print("Found {} subdirect product(s):".format(len(subdirect_products)))
         for H in subdirect_products:
@@ -313,7 +310,7 @@ def find_subdirect_products(groups):
 
 # ===============================================
 # Example:
-    # The below example may take some time, but should output 2 non-isormphic subdirect products, [720, 763] and [1440, 5842] (S_6 and C_2 x S_6)
+    # The below example checks C_2 x C_2 x S_6. It may take some time, but should output 2 non-isormphic subdirect products, [720, 763] and [1440, 5842] (S_6 and C_2 x S_6)
 
 # sage: G_1 = CyclicPermutationGroup(2)
 # sage: G_2 = CyclicPermutationGroup(2)
