@@ -59,4 +59,4 @@ def check_intersectivity_ramification_degrees(f, *polynomials):
         if not found_valid_prime:
             return f"The polynomial {poly_product_str} is not intersective; it fails at the ramified prime {p}."
     
-    return "The polynomial {poly_product_str} is intersective at ramified primes."
+    return f"The polynomial {poly_product_str} is intersective at ramified primes."
