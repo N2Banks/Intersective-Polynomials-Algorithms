@@ -20,6 +20,6 @@ Therefore, to classify possible Galois groups of strongly intersective polynomia
 
 Cross-referencing the results of these algorithms gives a finite list of all Galois groups of strongly intersective polynomials by degree.
 
-For the arithmetic side of things, it was simpler to use a theorem of Sonn ("Polynomials With Roots in $\mathbb{Q}_p$ For All $p$", 2008) involving decomposition groups. As part of my thesis, I showed that this condition need only hold for ramified primes, and since these are finite in number, this constitutes another algorithm. This is the content of **file 4**.
+For the arithmetic side of things, it was simpler to use a theorem of Sonn ("Polynomials With Roots in $\mathbb{Q}_p$ For All $p$", 2008) involving decomposition groups. As part of my thesis, I showed that this condition need only hold for ramified primes, and since these are finite in number, this constitutes another algorithm. This doesn't have a separate file, but the one described in the next paragraph could be easily modified to use this algorithm.
 
 In my thesis, I proved another criteria for intersectivity at ramified primes. It amounts to checking ramification and inertia degrees in various subextensions cut out by single roots. This is the content of "check_intersectivity_ramification_degrees.sage".
